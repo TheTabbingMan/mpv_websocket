@@ -69,11 +69,11 @@ impl<'a> MakeWriter<'a> for LazyFileLogger {
 }
 
 fn main() {
-    let log_dir = if let Ok(mut exe_path) = std::env::current_exe() {
-        exe_path.pop();
-        exe_path.join("logs")
+    let log_dir = if let Ok(home) = std::env::var("HOME") {
+        PathBuf::from(home).join(".cache").join("mpv_websocket")
     } else {
-        PathBuf::from("logs")
+        // Safe fallback in case the binary runs in an environment without $HOME
+        std::env::temp_dir().join("mpv_websocket")
     };
 
     let file_logger = LazyFileLogger::new(log_dir);
